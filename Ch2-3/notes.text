@@ -1,0 +1,17 @@
+Since we covered pointers, let's talk about the difference between value receivers, 
+which you saw in the previous chapter, and pointer receivers. If we look back at the function area, 
+we can change it to have a pointer receiver like this, by adding an asterisk before the type, which 
+in this case is dimension. But what is actually the difference between the two? Well, for a value method, 
+you can set the value of height or width, but that would only affect those fields for the duration of 
+the method. Whereas when you use the pointer receiver, any manipulation of the fields will actually 
+update the value, and lets pass the execution of the method. So let's try that here. So if we go back 
+to d := Dimension and we have 10, five, six, then we do format print line, oops, d.Area. Then we do format 
+dot print line d, and then we'll call format dot print, and then we'll format print line d. Let's change 
+this to the correct spelling. Okay, now if we look back at these, if we change d.height to equal, 
+instead of six, to eight, we return just the regular area, and then in volume we will set d.height back to 
+six, and we'll see how that changes. So if we do go run main.go, we can see that during the course we 
+changed height to eight, and when we printed out d, we can see that height has been changed to eight. But 
+when we run volume, we set height back to six, and when we print out d after running volume, we see that 
+it stayed the same, which is exactly how by value or by pointer works. So whether you use pointer or value 
+receivers will be determined by what you want your method to accomplish. Just return a value, or change the 
+value of the variables directly.
