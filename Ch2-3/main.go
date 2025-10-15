@@ -1,5 +1,7 @@
 package main
 
+//pointers v. value methods
+
 import (
 	"fmt"
 )

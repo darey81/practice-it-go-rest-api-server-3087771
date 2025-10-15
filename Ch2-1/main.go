@@ -1,4 +1,5 @@
 package main
+// methods v. functions
 
 import (
 	"fmt"

@@ -1,5 +1,7 @@
 package main
 
+// structs and receiver methods
+
 import (
 	"fmt"
 )
