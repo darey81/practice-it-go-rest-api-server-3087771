@@ -1,0 +1,34 @@
+Then I'll create the product struct. So we'll have type product struct. Now is a good time to bring up 
+returning results in a JSON format, which is designed specifically for data exchange and is a popular 
+format in API responses. Go allows you to specify a JSON formatted field name right in the struct declaration. 
+So in creating the product struct, I will also add the JSON name in the struct as well. Quick note, 
+when creating a struct, we use a capital first letter when the struct is being exported and a lower case first 
+letter when it is not. So in our case, it'll be used inside of our backend package. So I won't capitalize 
+the P in product. And then I'll add ID and then the JSON version, product code, and then the JSON version. 
+And again, I like to have everything formatted nicely. Product code and name, inventory, price, and 
+finally, status. First I'll add the method to return all products. So we'll call that function getProducts. 
+And since we're just returning products, we don't need to have a receiver method, but we will be receiving 
+a DB connection and then we'll be returning an array of product and an error if it exists. Now let's 
+define that function. So first we'll get the rows and then an error if an error happens. And we will query 
+the database and the query will be select star from products. And then we'll check the error, if error 
+not equal nil. We're not going to fail it fatally, we're just going to return nil for the array of product 
+and then we will return the error. Then we'll defer the closing of the rows. We'll create our products 
+array, and then we'll loop through the rows and we'll do var p product. And then if error, and we'll scan 
+the row into our variable. So we have &p.id, &p.ProductCode, &p.Name, &p.Inventory, &p.Price, and finally, 
+&p.status. But we'll add on to the end of this and we'll check our error here. So if it doesn't equal, 
+then we will return nil for the products and the error. But if there isn't an error, then we want to add 
+this to our products array. So then we have products equals append products comma p. And then after that, 
+we will return products, the array, and error if there is one. Now I'll add a method to handle the type 
+of request where we pass the ID of the product. So the first one will be slash product slash ID and we'll 
+call it fetch products. But since we will be updating the ID of a product that we will declare in the 
+backend file, we'll want to use a receiver method. So we'll have p star product and we named it fetch 
+product. And it will take the parameter db and it will return an error if it can't find it. Actually, 
+let's call this one getProduct. And now for the function, and it will return db.Query SELECT productCode, 
+name, inventory, price, status from products where ID equals question mark. Then we will add the ID and 
+we will scan the output into that same product variable. So we have &p.ProductCode, &p.Name, &p.Inventory, 
+&p.Price, and finally, &p.Status. Okay. Before we go over to the backend file, let's fix this one. 
+I see we have an error. Instead of query, it should be QueryRow. So we save that. Oh, there's another error. 
+I'm using the wrong one here. It should be ID. And now we're good to go. So now in the backend.go file, 
+we'll update the router with the two functions. We have initialized routes. So now what we'll have is products 
+and this one will be called a.allProducts, although we haven't created it yet, we will next. And this is 
+for methods get, and then we'll have one for the function. And this one will be for product/id. And that one will be handled by fetch product. And that method is also a GET. Now we'll add the handlers. So we have function a. And the first one we'll add is allProducts and it has a ResponseWriter and the request. But since this is just we're returning all the products, we don't need to look at the request, but what we'll do here is we're going to set products, which will be an array, and we'll also check for an error and that will be equal to getProducts and we'll send in the DB. We'll check to see if we get an error, if it doesn't equal nil. If it doesn't equal nil, I will send it to, we'll do format Printf once you getProducts error. We'll add the error and then we'll get the err.Error. And then we will use one of the helper functions that I've added to respond with JSONs. So we respond with an error and respond with JSON. Responds with an error, packages up the error, and then calls respondWithJSON, so that we always respond with the JSON. Well, getting back to this. This is where we will call it, respondWithError. We'll send the writer, ResponseWriter. We'll have http.StatusInternalServerError and then err.Error, and then we will return. But if there is no errors, we will respondWithJSON. And again we'll send the ResponseWriter that the status is okay and we will send products. Next, we'll add the fetch products. So I'll add the function and the receiver, fetchProduct. And again, we add the http.ResponseWriter and the request. And in this case, since we do need a variable, we do need to check the request. So we'll do vars and we'll call the built in function from the router to get the vars and we'll send it in the request. Then at a vars, we're going to get the id and we'll get that by looking at the array returned and getting the ID out of that. Then with that we're going to create product variable. And with the product variable, we're then going to set the ID to equal the id we just pulled from the request and we're going to call the p.getProduct and we'll send in the DB and then we'll check if it's an error. If error doesn't equal nil, we're going to do the same thing we did previously, which is to respond with an error. But this time we'll say getProduct error. And then if there's no error, we'll just respondWithJSON. We'll write it to the ResponseWriter. We want http.StatusOK and then we'll send the product p. Okay, so before we try it out, we're going to fix a couple of errors here. This should be capitalized and this is a string, so we need to convert it to an id. So we'll have, to an int, sorry. So then we have string convert Atoi and we have I'd. Save that. Come down here. We'll go into the backend directory, go mod tidy and then we'll cd into the practice it directory and we'll do go run. And now in another terminal, we're going to run curl localhost:9003/products. And we get back JSON of all the products. Now let's get a particular product. So we'll do same curl and this time we'll do product slash. We'll do one, we'll pick an id, we'll do ID number nine and hit return. And as you can see, it returns the product with the id number nine.
